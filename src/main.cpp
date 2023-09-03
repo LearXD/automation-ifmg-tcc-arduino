@@ -81,11 +81,7 @@ void setup()
   lcd.createChar(2, lightCustomChar);
 
   lcd.backlight();
-  // lcd.draw_horizontal_graph(0, 0, 16, 16);
-  //  lcd.setBacklight(HIGH);
-
   lcd.clear();
-  // while(true);
 }
 
 // Função que atualiza o LCD
