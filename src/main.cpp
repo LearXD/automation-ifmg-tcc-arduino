@@ -111,13 +111,9 @@ void updateSerial()
   lcd.print("%");
 }
 
-bool a = false;
-
 // Função que executa o loop principal
 void loop()
 {
-  digitalWrite(7, a = !a);
-
   updateSerial();
 
   Serial.println();
