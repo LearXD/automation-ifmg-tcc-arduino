@@ -11,6 +11,12 @@
 #define HUMIDITY_SENSOR_PIN A0
 #define TEMPERATURE_SENSOR_PIN 2
 #define LIGHT_SENSOR_PIN A2
+#define FAN 3
+
+/*
+  VARIAVEIS ALTERÁVEIS
+*/
+#define ENABLE_FAN_TEMPERATURE 26
 
 byte degreeCustomChar[] = {
     B01110,
@@ -63,6 +69,12 @@ float getLight()
   return (analogRead(LIGHT_SENSOR_PIN) / 1023.0) * 100.0;
 }
 
+void temperatureMonitor()
+{
+  float temperature = getTemperature();
+  digitalWrite(FAN, temperature >= ENABLE_FAN_TEMPERATURE);
+}
+
 // Função que inicializa todos os componentes
 void setup()
 {
@@ -111,6 +123,7 @@ void updateSerial()
 void loop()
 {
   updateSerial();
+  temperatureMonitor();
 
   Serial.println();
   Serial.println("Temperatura: " + String(getTemperature()) + " C");
