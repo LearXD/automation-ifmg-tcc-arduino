@@ -11,40 +11,19 @@
 #define HUMIDITY_SENSOR_PIN A0
 #define TEMPERATURE_SENSOR_PIN 2
 #define LIGHT_SENSOR_PIN A2
+
+#define ILLUMINATION 5
+#define HUMIDITY_ALERT_LED 6
 #define FAN 3
 
-/*
-  VARIAVEIS ALTERÁVEIS
-*/
-#define ENABLE_FAN_TEMPERATURE 26
+// CUSTOMIZAÇÃO DO LCD
+byte degreeCustomChar[] = {B01110, B10001, B10001, B10001, B01110, B00000, B00000, B00000};
+byte humidityCustomChar[] = {B00100, B00100, B01110, B01110, B11111, B11111, B11111, B01110};
+byte lightCustomChar[] = {B00000, B10101, B01110, B11111, B01110, B10101, B00000, B00000};
 
-byte degreeCustomChar[] = {
-    B01110,
-    B10001,
-    B10001,
-    B10001,
-    B01110,
-    B00000,
-    B00000,
-    B00000};
-byte humidityCustomChar[] = {
-    B00100,
-    B00100,
-    B01110,
-    B01110,
-    B11111,
-    B11111,
-    B11111,
-    B01110};
-byte lightCustomChar[] = {
-    B00000,
-    B10101,
-    B01110,
-    B11111,
-    B01110,
-    B10101,
-    B00000,
-    B00000};
+#define DEGREE_CHAR 0
+#define HUMIDITY_CHAR 1
+#define LIGHT_CHAR 2
 
 // Inicialização de objetos
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -72,7 +51,7 @@ float getLight()
 void temperatureMonitor()
 {
   float temperature = getTemperature();
-  digitalWrite(FAN, temperature >= ENABLE_FAN_TEMPERATURE);
+  // digitalWrite(FAN, temperature >= ENABLE_FAN_TEMPERATURE);
 }
 
 // Função que inicializa todos os componentes
@@ -84,13 +63,11 @@ void setup()
   pinMode(TEMPERATURE_SENSOR_PIN, INPUT);
   pinMode(LIGHT_SENSOR_PIN, INPUT);
 
-  pinMode(7, OUTPUT);
-
   lcd.init();
 
-  lcd.createChar(0, degreeCustomChar);
-  lcd.createChar(1, humidityCustomChar);
-  lcd.createChar(2, lightCustomChar);
+  lcd.createChar(DEGREE_CHAR, degreeCustomChar);
+  lcd.createChar(HUMIDITY_CHAR, humidityCustomChar);
+  lcd.createChar(LIGHT_CHAR, lightCustomChar);
 
   lcd.backlight();
   lcd.clear();
@@ -103,17 +80,17 @@ void updateSerial()
 
   lcd.print(getTemperature());
   lcd.print("C");
-  lcd.write(0);
+  lcd.write(DEGREE_CHAR);
 
   lcd.setCursor(8, 0);
 
   lcd.print(getLight());
   lcd.print("% ");
-  lcd.write(2);
+  lcd.write(LIGHT_CHAR);
 
   lcd.setCursor(0, 1);
 
-  lcd.write(1);
+  lcd.write(HUMIDITY_CHAR);
   lcd.print(" ");
   lcd.print(getHumidity());
   lcd.print("%");
@@ -123,13 +100,9 @@ void updateSerial()
 void loop()
 {
   updateSerial();
-  temperatureMonitor();
 
-  Serial.println();
-  Serial.println("Temperatura: " + String(getTemperature()) + " C");
-  Serial.println("Umidade: " + String(getHumidity()) + " %");
-  Serial.println("Luminosidade: " + String(getLight()) + " %");
-  Serial.println();
+  // Chamada de Controladores
+  temperatureMonitor();
 
   // Delay para impedir que o LCD fique piscando
   delay(1000);
