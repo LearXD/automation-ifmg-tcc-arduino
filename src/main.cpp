@@ -49,7 +49,7 @@ bool isFanEnabled = false;
 
 float getHumidity()
 {
-  return 100.0 - ((analogRead(HUMIDITY_SENSOR_PIN) / 1023.0) * 100.0);
+  return 100.0 - ((analogRead(HUMIDITY_SENSOR_PIN) - (1023.0 / 2.0)) / (1023.0 / 2.0) * 100.0);
 }
 
 int getTemperature()
